@@ -3,7 +3,6 @@ import mimetypes
 import os
 
 
-#
 class Message:
     PRIORITY_LOWEST = 'lowest'
     PRIORITY_LOW = 'low'
@@ -33,6 +32,14 @@ class Message:
     _images = []
 
     def __init__(self, content: str = '', title: str = '', priority: str = PRIORITY_NORMAL, level: str = LEVEL_INFO):
+        """Message constructor.
+
+        :param str content:  Message text
+        :param str title:    Message title
+        :param str priority: Priority
+        :param str level:    Level
+        """
+
         self \
             .set_title(title) \
             .set_content(content) \
@@ -42,53 +49,69 @@ class Message:
         self._files = []
         self._images = []
 
-    def _prepare_files(self, array: list, field: str, files: list) -> list:
-        for idx in files:
-            file = files[idx]
+    def _prepare_files(self, array: dict, field: str, files: list) -> dict:
+        """Prepares a message file.
 
-            field = field + '[' + idx + ']'
+        :param dict array: Result array to fill
+        :param str  field: Type of files to prepare
+        :param list files: List of files to prepare
 
-            if file.type == self.FILE_TYPE_FILE:
-                if not file.mime_type:
-                    file.mime_type = mimetypes.read_mime_types(file.file_name)
+        :returns: Prepared files
+        """
+
+        for idx, file in enumerate(files):
+            field = field + '[' + str(idx) + ']'
+
+            if file['type'] == self.FILE_TYPE_FILE:
+                if not file['mime_type']:
+                    file['mime_type'] = mimetypes.read_mime_types(file['file_name'])
+
+                if not file['file_name']:
+                    file['file_name'] = os.path.basename(file['file_path'])
 
                 array[field] = (
-                    file.file_name,
-                    open(file.file_name, 'rb'),
-                    file.mime_type
+                    file['file_name'],
+                    open(file['file_path'], 'rb'),
+                    file['mime_type']
                 )
-            elif file.type == self.FILE_TYPE_CONTENT:
-                if not file.file_name:
-                    file.file_name = 'file.dat'
+            elif file['type'] == self.FILE_TYPE_CONTENT:
+                if not file['file_name']:
+                    file['file_name'] = 'file.dat'
 
-                if not file.mime_type:
-                    file.mime_type = 'application/octet-stream'
+                if not file['mime_type']:
+                    file['mime_type'] = 'application/octet-stream'
 
                 array[field] = (
-                    file.file_name,
-                    file.content,
-                    file.mime_type
+                    file['file_name'],
+                    file['content'],
+                    file['mime_type']
                 )
-            elif file.type == self.FILE_TYPE_URL:
-                if not file.file_name:
-                    file.file_name = os.path.basename(file.url)
+            elif file['type'] == self.FILE_TYPE_URL:
+                if not file['file_name']:
+                    file['file_name'] = os.path.basename(file['url'])
 
-                if not file.mime_type:
-                    file.mime_type = 'application/octet-stream'
+                if not file['mime_type']:
+                    file['mime_type'] = 'application/octet-stream'
 
-                response = requests.get(file.url)
+                response = requests.get(file['url'])
 
                 array[field] = (
-                    file.file_name,
-                    response.text,
-                    file.mime_type
+                    file['file_name'],
+                    response.content,
+                    file['mime_type']
                 )
 
         return array
 
-    # Send message to Notify.Events
-    #   channel_token - channel identification token
     def send(self, channel_token: str):
+        """Sends the message to the specified channel.
+
+        You can get the source token when connecting the Python source
+        to your channel on the Notify.Events service side.
+
+        :param str channel_token: Source token
+        """
+
         data = {
             'content': self._content,
             'priority': self._priority,
@@ -96,9 +119,9 @@ class Message:
         }
 
         if not self._title.isspace():
-            data.title = self._title
+            data['title'] = self._title
 
-        files = []
+        files = {}
         files = self._prepare_files(files, 'files', self._files)
         files = self._prepare_files(files, 'images', self._images)
 
@@ -106,30 +129,54 @@ class Message:
 
         requests.post(url, data=data, files=files)
 
-    # Set message title
     def set_title(self, title: str):
+        """Sets the value of the Title property.
+
+        :param str title: Message title
+
+        :returns: Message
+        """
         self._title = title
 
         return self
 
-    # Get message title
     def get_title(self) -> str:
+        """Returns the value of the Title property.
+
+        :returns: Message title
+        """
         return self._title
 
-    # Set message content
-    # allowed simple html tags: <a>, <b>, <i>, <br>
     def set_content(self, content: str):
+        """Sets the value of the Content property.
+
+        Allowed html tags: <a>, <b>, <i>, <br>
+
+        :param str content: Message content
+
+        :returns: Message title
+        """
         self._content = content
 
         return self
 
-    # Get message content
     def get_content(self) -> str:
+        """Returns the value of the Content property.
+
+        :returns: Message content
+        """
         return self._content
 
-    # Set message priority
-    # allowed predefined constants PRIORITY_*
     def set_priority(self, priority: str):
+        """Sets the value of the Priority property.
+
+        For recipients which supports priority, the message will be highlighted accordingly.
+        This method checks that priority param is in the list of available message priorities.
+
+        :param str priority: Message priority
+
+        :returns: Message
+        """
         if not (priority in [
             self.PRIORITY_LOWEST,
             self.PRIORITY_LOW,
@@ -143,13 +190,23 @@ class Message:
 
         return self
 
-    # Get message priority
     def get_priority(self) -> str:
+        """Returns the value of the Priority property.
+
+        :returns: Message priority
+        """
         return self._priority
 
-    # Set message level
-    # allowed predefined constants LEVEL_*
     def set_level(self, level: str):
+        """Sets the value of the Level property.
+
+        This method checks that level param is in the list of available message levels.
+        For recipients which have differences in the display of messages at different levels, this level will be applied.
+
+        :param str level: Message Level
+
+        :returns: Message
+        """
         if not (level in [
             self.LEVEL_VERBOSE,
             self.LEVEL_INFO,
@@ -164,86 +221,117 @@ class Message:
 
         return self
 
-    # Get message level
     def get_level(self) -> str:
+        """Returns the value of the Level property.
+
+        :returns: Message level
+        """
         return self._level
 
-    # Add file to message
-    #   file_name - absolute path to destination file
-    #   mime_type - file mime type (optional)
-    def add_file(self, file_name: str, mime_type: str = None):
+    def add_file(self, file_path: str, file_name: str, mime_type: str = None):
+        """Adds a new File by local file path to the massage attached files list.
+
+        :param str file_path: Local file path
+        :param str file_name: Attachment file name
+        :param str mime_type: Attachment file MimeType
+
+        :returns: Message
+        """
         self._files.append({
-            type: self.FILE_TYPE_FILE,
-            file_name: file_name,
-            mime_type: mime_type
+            'type': self.FILE_TYPE_FILE,
+            'file_path': file_path,
+            'file_name': file_name,
+            'mime_type': mime_type
         })
 
         return self
 
-    # Add content as file to message
-    #   content   - file content
-    #   file_name - file name (optional)
-    #   mime_type - file mime type (optional)
     def add_file_from_content(self, content: str, file_name: str = None, mime_type: str = None):
+        """Adds a new File by content to the massage attached files list.
+
+        :param str content:   File content
+        :param str file_name: Attachment file name
+        :param str mime_type: Attachment file MimeType
+
+        :returns: Message
+        """
         self._files.append({
-            type: self.FILE_TYPE_CONTENT,
-            content: content,
-            file_name: file_name,
-            mime_type: mime_type
+            'type': self.FILE_TYPE_CONTENT,
+            'content': content,
+            'file_name': file_name,
+            'mime_type': mime_type
         })
 
         return self
 
-    # Add file by url link to message
-    #   url       - link to file
-    #   file_name - file name (optional)
-    #   mime_type - file mime type (optional)
     def add_file_from_url(self, url: str, file_name: str = None, mime_type: str = None):
+        """Adds a new File by URL to the massage attached files list.
+
+        :param str url:       File remote URL
+        :param str file_name: Attachment file name
+        :param str mime_type: Attachment file MimeType
+
+        :returns: Message
+        """
         self._files.append({
-            type: self.FILE_TYPE_URL,
-            url: url,
-            file_name: file_name,
-            mime_type: mime_type
+            'type': self.FILE_TYPE_URL,
+            'url': url,
+            'file_name': file_name,
+            'mime_type': mime_type
         })
 
         return self
 
-    # Add image to message
-    #   file_name - absolute path to destination image
-    #   mime_type - image mime type (optional)
-    def add_image(self, file_name: str, mime_type: str = None):
+    def add_image(self, file_path: str, file_name: str, mime_type: str = None):
+        """Adds a new Image by local file path to the massage attached images list.
+
+        :param str file_path: Local file path
+        :param str file_name: Attachment file name
+        :param str mime_type: Attachment file MimeType
+
+        :returns: Message
+        """
         self._images.append({
-            type: self.FILE_TYPE_FILE,
-            file_name: file_name,
-            mime_type: mime_type
+            'type': self.FILE_TYPE_FILE,
+            'file_path': file_path,
+            'file_name': file_name,
+            'mime_type': mime_type
         })
 
         return self
 
-    # Add content as image to message
-    #   content   - image content
-    #   file_name - image file name (optional)
-    #   mime_type - image mime type (optional)
     def add_image_from_content(self, content: str, file_name: str = None, mime_type: str = None):
+        """Adds a new Image by content to the massage attached images list.
+
+        :param str content:   File content
+        :param str file_name: Attachment file name
+        :param str mime_type: Attachment file MimeType
+
+        :returns: Message
+        """
         self._images.append({
-            type: self.FILE_TYPE_CONTENT,
-            content: content,
-            file_name: file_name,
-            mime_type: mime_type
+            'type': self.FILE_TYPE_CONTENT,
+            'content': content,
+            'file_name': file_name,
+            'mime_type': mime_type
         })
 
         return self
 
-    # Add image by url link to message
-    #   url       - link to image
-    #   file_name - image file name (optional)
-    #   mime_type - image mime type (optional)
     def add_image_from_url(self, url: str, file_name: str = None, mime_type: str = None):
+        """Adds a new Image by URL to the massage attached images list.
+
+        :param str url:       File remote URL
+        :param str file_name: Attachment file name
+        :param str mime_type: Attachment file MimeType
+
+        :returns: Message
+        """
         self._images.append({
-            type: self.FILE_TYPE_URL,
-            url: url,
-            file_name: file_name,
-            mime_type: mime_type
+            'type': self.FILE_TYPE_URL,
+            'url': url,
+            'file_name': file_name,
+            'mime_type': mime_type
         })
 
         return self
