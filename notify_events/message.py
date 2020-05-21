@@ -60,7 +60,7 @@ class Message:
         """
 
         for idx, file in enumerate(files):
-            field = field + '[' + str(idx) + ']'
+            key = field + '[' + str(idx) + ']'
 
             if file['type'] == self.FILE_TYPE_FILE:
                 if not file['mime_type']:
@@ -69,7 +69,7 @@ class Message:
                 if not file['file_name']:
                     file['file_name'] = os.path.basename(file['file_path'])
 
-                array[field] = (
+                array[key] = (
                     file['file_name'],
                     open(file['file_path'], 'rb'),
                     file['mime_type']
@@ -81,7 +81,7 @@ class Message:
                 if not file['mime_type']:
                     file['mime_type'] = 'application/octet-stream'
 
-                array[field] = (
+                array[key] = (
                     file['file_name'],
                     file['content'],
                     file['mime_type']
@@ -95,7 +95,7 @@ class Message:
 
                 response = requests.get(file['url'])
 
-                array[field] = (
+                array[key] = (
                     file['file_name'],
                     response.content,
                     file['mime_type']
