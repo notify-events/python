@@ -10,7 +10,7 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setup(
     name="notify_events",
-    version="1.0.2",
+    version="1.0.3",
     description="Extension to integrate your project with Notify.Events service.",
     long_description=README,
     long_description_content_type="text/markdown",
@@ -24,5 +24,5 @@ setup(
         "Programming Language :: Python :: 3.7",
     ],
     packages=["notify_events"],
-    install_requires=["requests", "mimetypes", "os"],
+    install_requires=["requests"],
 )
