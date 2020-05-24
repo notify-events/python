@@ -184,7 +184,7 @@ class Message:
             self.PRIORITY_HIGH,
             self.PRIORITY_HIGHEST
         ]):
-            raise Exception('Unknown priority value')
+            raise ValueError('Unknown priority value')
 
         self._priority = priority
 
@@ -215,7 +215,7 @@ class Message:
             self.LEVEL_ERROR,
             self.LEVEL_SUCCESS
         ]):
-            raise Exception('Unknown level value')
+            raise ValueError('Unknown level value')
 
         self._level = level
 
