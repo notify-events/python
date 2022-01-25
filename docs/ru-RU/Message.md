@@ -190,6 +190,29 @@ def add_image_from_url(self, url: str, file_name: str = None, mime_type: str = N
 **$mimeType** | String | Нет | MimeType файла
 
 
+## addAction
+#### Прикрепить действие
+
+```python
+def add_action(
+    self, name: str,
+    title: str,
+    callback_url: str = None,
+    callback_method: str = None,
+    callback_headers: dict = None,
+    callback_content: str = None
+)
+```
+Параметр | Тип | Обязательный | Описание
+---------|-----|--------------|---------
+**$name**            | String | Да  | Код действия
+**$title**           | String | Нет | Название кнопки
+**callback_url**     | String | Нет | Адрес для обратного вызова
+**callback_method**  | String | Нет | Метод запроса для обратного вызова
+**callback_headers** | Dict   | Нет | Заголовки для обратного вызова
+**callback_content** | String | Нет | Данные для обратного вызова 
+
+
 ## send
 #### Отправить сообщение
 

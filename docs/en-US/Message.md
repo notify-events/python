@@ -190,6 +190,29 @@ Param | Type | Required | Description
 **$mimeType** | String | No | File MimeType
 
 
+## addAction
+#### Add an action
+
+```python
+def add_action(
+    self, name: str,
+    title: str,
+    callback_url: str = None,
+    callback_method: str = None,
+    callback_headers: dict = None,
+    callback_content: str = None
+)
+```
+Param | Type | Required | Description
+------|------|----------|------------
+**$name**            | String | Yes | Action code
+**$title**           | String | No  | Button title
+**callback_url**     | String | No  | Callback URL
+**callback_method**  | String | No  | Callback request method
+**callback_headers** | Dict   | No  | Callback headers
+**callback_content** | String | No  | Callback payload 
+
+
 ## send
 #### Send the message
 

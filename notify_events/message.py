@@ -30,6 +30,7 @@ class Message:
 
     _files = []
     _images = []
+    _actions = []
 
     def __init__(self, content: str = '', title: str = '', priority: str = PRIORITY_NORMAL, level: str = LEVEL_INFO):
         """Message constructor.
@@ -48,6 +49,7 @@ class Message:
 
         self._files = []
         self._images = []
+        self._actions = []
 
     def _prepare_files(self, array: dict, field: str, files: list) -> dict:
         """Prepares a message file.
@@ -124,6 +126,10 @@ class Message:
         files = {}
         files = self._prepare_files(files, 'files', self._files)
         files = self._prepare_files(files, 'images', self._images)
+
+        for idx, action in enumerate(self._actions):
+            for key, value in action.items():
+                data['actions[' + str(idx) + '][' + key + ']'] = value
 
         url = self._base_url % channel_token
 
@@ -332,6 +338,29 @@ class Message:
             'url': url,
             'file_name': file_name,
             'mime_type': mime_type
+        })
+
+        return self
+
+    def add_action(self, name: str, title: str, callback_url: str = None, callback_method: str = None, callback_headers: dict = None, callback_content: str = None):
+        """Adds a new Action to the massage
+
+        :param str  name:             Action name
+        :param str  title:            Action title (button title)
+        :param str  callback_url:     Action callback URL
+        :param str  callback_method:  Action callback Method
+        :param dict callback_headers: Action callback Headers
+        :param str  callback_content: Action callback Content
+
+        :returns: Message
+        """
+        self._actions.append({
+            'name': name,
+            'title': title,
+            'callback_url': callback_url,
+            'callback_method': callback_method,
+            'callback_headers': callback_headers,
+            'callback_content': callback_content,
         })
 
         return self
