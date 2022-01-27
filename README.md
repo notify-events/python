@@ -4,7 +4,7 @@ A simple Python extension that simplifies the process of integrating your projec
 
 #### Instruction on another languages
 
-- [Русский](/docs/ru-RU/README.md)
+- [Русский](https://github.com/notify-events/python/blob/master/docs/ru-RU/README.md)
 
 # Installation
 
@@ -39,4 +39,4 @@ message.add_file('path\to\local\file.zip', 'filename.zip')
 message.send('XXXXXXXX')
 ```
 
-[List of all available functions](/docs/en-US/Message.md)
+[List of all available functions](https://github.com/notify-events/python/blob/master/docs/en-US/Message.md)
