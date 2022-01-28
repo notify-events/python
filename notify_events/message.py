@@ -135,8 +135,9 @@ class Message:
             data['actions[' + str(idx) + '][callback_method]'] = action['callback_method']
             data['actions[' + str(idx) + '][callback_content]'] = action['callback_content']
 
-            for key, value in action['callback_headers'].items():
-                data['actions[' + str(idx) + '][callback_headers][' + urllib.parse.quote_plus(key) + ']'] = value
+            if isinstance(action['callback_headers'], dict):
+                for key, value in action['callback_headers'].items():
+                    data['actions[' + str(idx) + '][callback_headers][' + urllib.parse.quote_plus(key) + ']'] = value
 
         url = self._base_url % channel_token
 
