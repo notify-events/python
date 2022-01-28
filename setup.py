@@ -10,13 +10,14 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setup(
     name="notify_events",
-    version="1.1.1",
+    version="1.1.2",
     description="Extension to integrate your project with Notify.Events service.",
     long_description=README,
     long_description_content_type="text/markdown",
     url="https://github.com/notify-events/python",
     author="Notify.Events",
     author_email="support@notify.events",
+    keywords=['notification', 'alert', 'teams', 'viber', 'telegram', 'signal', 'slack', 'sms', 'voice', 'call'],
     license="MIT",
     classifiers=[
         "License :: OSI Approved :: MIT License",

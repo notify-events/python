@@ -129,13 +129,13 @@ class Message:
         files = self._prepare_files(files, 'images', self._images)
 
         for idx, action in enumerate(self._actions):
-            data['actions[' + str(idx) + '][name]'] = action.name
-            data['actions[' + str(idx) + '][title]'] = action.title
-            data['actions[' + str(idx) + '][callback_url]'] = action.callback_url
-            data['actions[' + str(idx) + '][callback_method]'] = action.callback_method
-            data['actions[' + str(idx) + '][callback_content]'] = action.callback_content
+            data['actions[' + str(idx) + '][name]'] = action['name']
+            data['actions[' + str(idx) + '][title]'] = action['title']
+            data['actions[' + str(idx) + '][callback_url]'] = action['callback_url']
+            data['actions[' + str(idx) + '][callback_method]'] = action['callback_method']
+            data['actions[' + str(idx) + '][callback_content]'] = action['callback_content']
 
-            for key, value in action.callback_headers.items():
+            for key, value in action['callback_headers'].items():
                 data['actions[' + str(idx) + '][callback_headers][' + urllib.parse.quote_plus(key) + ']'] = value
 
         url = self._base_url % channel_token
